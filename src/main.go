@@ -2,10 +2,12 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"github.com/CyCoreSystems/ari/v6/ext/play"
 	"github.com/inconshreveable/log15"
+	"os"
 
 	"github.com/CyCoreSystems/ari/v6"
 	"github.com/CyCoreSystems/ari/v6/client/native"
@@ -18,14 +20,15 @@ import (
 var log = log15.New()
 
 func main() {
+
 	_, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// connect
 	native.Logger = log
 
-	log.Info("Connecting to ARI")
-	/*cl, err := native.Connect(&native.Options{
+	/*log.Info("Connecting to ARI")
+	cl, err := native.Connect(&native.Options{
 		Application:  "test",
 		Username:     "admin",
 		Password:     "admin",
@@ -52,11 +55,20 @@ func main() {
 			return
 		}
 	}*/
+	textToSpeech()
 }
 
-func text_to_speech(audioText string) {
+func textToSpeech() {
 	// Instantiates a client.
 	ctx := context.Background()
+	scanner := bufio.NewScanner(os.Stdin)
+	audioText := ""
+
+	fmt.Print("Input something: ")
+	if scanner.Scan() {
+		audioText := scanner.Text()
+		fmt.Println("Text that's going to be transformed: " + audioText)
+	}
 
 	client, err := texttospeech.NewClient(ctx)
 	if err != nil {
@@ -66,6 +78,7 @@ func text_to_speech(audioText string) {
 
 	// Perform the text-to-speech request on the text input with the selected
 	// voice parameters and audio file type.
+
 	req := texttospeechpb.SynthesizeSpeechRequest{
 		// Set the text input to be synthesized.
 		Input: &texttospeechpb.SynthesisInput{
@@ -119,8 +132,7 @@ func app(ctx context.Context, h *ari.ChannelHandle) {
 		return
 	}
 
-	audioText := "Hallo"
-	text_to_speech(audioText)
+	textToSpeech()
 
 	if err := play.Play(ctx, h, play.URI("file://output.mp3")).Err(); err != nil {
 		log.Error("failed to play sound", "error", err)
