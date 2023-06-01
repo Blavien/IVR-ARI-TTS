@@ -6,3 +6,5 @@ Baseada no exemplo Play do repositório https://github.com/CyCoreSystems/ari/tre
 
 Não está a funcionar o envio do audio gerado para o servidor.
 Iremos fazer uso da feature do Asterisk chamada ExternalMedia para que possamos fazer stream do audio para o canal de comunicação.
+
+ExternalMedia - https://github.com/CyCoreSystems/ari/blob/master/channel.go
